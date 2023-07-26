@@ -48,9 +48,17 @@ line7: `UNITS = 'metric'`
 
 ### Functions:
 
+The `get_weather_data` function is responsible for collecting and fetching the data from the OpenWeatherMap API using the `City`, `UNITS` and `API_KEY` to specify the city we want, the type of units (imperial or metric) and our API_Key to authenticate our script requesting the data.
 
+The `display_temperature_on_map` function makes use of the latitude and longitude values to plot the temperature as tiles across the map for accurate temperature readings. `map_city` creates the map using the `folium` library. Next is the **Temperature Overlay** which pulls the temperature data from the OpenWeatherMap API which is then displayed as tiles across the map.
+
+The `tooltip` displays the temperature in the correct unit by the mouse cursor when you hover over it on the map. 
+
+The `map_city.save` function saves this in a embedded HTML file and prints the message in the terminal to help guide the user to run the HTML file on their browser.
 ## 2. Design
 ---
+
+
 
 ## 3. How to execute and run the data visualization
 ---

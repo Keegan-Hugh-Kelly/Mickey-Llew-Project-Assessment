@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Weather Forecast App | by Keegan Kelly</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.3/css/bootstrap.min.css"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="./static/images/mickey_llew_logo.png"
+    />
+    <link rel="stylesheet" href="./static/styles.css" />
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <div class="navbar">
+      <div class="nav-logo">
+        <img src="./static/images/mickey_llew_logo.png" alt="company_logo" />
+      </div>
+      <div class="nav-links">
+        <a href="#">Weather Map</a>
+        <a href="#">Weather Graphs</a>
+        <a href="#">Weather Tables</a>
+      </div>
+      <div class="cta-button">
+        <a>Contact Us</a>
+      </div>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map-container">{{ map_html | safe }}</div>
+
+    <!-- Weather Forecast Table (Manual Horizontal Carousel) -->
+    <div id="weather-forecast-container">
+      {% for day_data in weather_forecast %}
+      <div class="weather-card">
+        <div class="card-header">{{ day_data['date'] }}</div>
+        <div class="card-body">
+          <p>{{ day_data['time'] }}</p>
+          <img
+            src="{{ day_data['graphic_url'] }}"
+            alt="Weather Graphic"
+            class="img-fluid mb-3"
+          />
+          <p>Temperature: {{ day_data['temperature'] }}°C</p>
+          <p>Description: {{ day_data['description'] }}</p>
+          <p>Cloud Coverage: {{ day_data['cloud_coverage'] }}%</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- JavaScript Code -->
+    <!-- Leaflet library -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+      // Set the initial position to 0
+      let position = 0;
+
+      // Function to slide the carousel left
+      const slideLeft = () => {
+        position = Math.max(
+          position - weatherCards[0].offsetWidth - 20,
+          -forecastContainer.scrollWidth + forecastContainer.offsetWidth
+        );
+        forecastContainer.style.transform = `translateX(${position}px)`;
+      };
+
+      // Function to slide the carousel right
+      const slideRight = () => {
+        position = Math.min(position + weatherCards[0].offsetWidth + 20, 0);
+        forecastContainer.style.transform = `translateX(${position}px)`;
+      };
+    </script>
+  </body>
+</html>
