@@ -41,59 +41,21 @@ def display_temperature_on_map(weather_data):
     lat = weather_data['coord']['lat']
     lon = weather_data['coord']['lon']
     temperature = weather_data['main']['temp']
+    CITY = weather_data['name']
 
-    # Create the base map with the street map tiles
+    # Create the base map with the 'Default' tiles (OpenStreetMap)
     map_city = folium.Map(location=[lat, lon], zoom_start=10, tiles='OpenStreetMap')
 
     # Add a tooltip to show temperature by the mouse cursor
     tooltip = f'Temperature: {temperature}°C'
     folium.Marker([lat, lon], popup=f'{CITY}\nTemperature: {temperature}°C', tooltip=tooltip).add_to(map_city)
 
-    # Define the available tile layers with simplified names
-    tile_layers = {
-        'OpenStreetMap': 'Default',
-        'Stamen Terrain': 'Stamen Terrain',
-        'Esri Satellite': 'Esri Satellite',
-        'Street': 'CartoDB Positron',
-    }
+    # Add 'Satellite' tiles using the default tile source
+    folium.TileLayer(tiles='Stamen Terrain', name='Terrain').add_to(map_city)
 
-    # Add custom tile layers for temperature, wind, and rain
-    custom_tile_layers = {
-        'Temperature': {
-            'url': 'http://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid={API_KEY}',
-            'attribution': 'Temperature data © OpenWeatherMap'
-        },
-        'Wind': {
-            'url': 'http://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid={API_KEY}',
-            'attribution': 'Wind data © OpenWeatherMap'
-        },
-        'Rain': {
-            'url': 'http://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid={API_KEY}',
-            'attribution': 'Rain data © OpenWeatherMap'
-        }
-    }
-
-    # Add base map tiles to the map
-    folium.TileLayer(tiles='OpenStreetMap', name='OpenStreetMap').add_to(map_city)
-    folium.TileLayer(tiles='Stamen Terrain', name='Stamen Terrain').add_to(map_city)
-    folium.TileLayer(tiles='Esri Satellite', name='Esri Satellite').add_to(map_city)
-    folium.TileLayer(tiles='CartoDB Positron', name='Street').add_to(map_city)
-
-    # Create a LayerControl for map type
+    # Create a LayerControl for map type with 'Default' (OpenStreetMap) and 'Terrain' (Stamen Terrain) options
     map_layer_control = folium.LayerControl(position='topright', collapsed=False)
     map_city.add_child(map_layer_control)
-
-    # Create LayerGroup for overlay type (temperature, wind, rain)
-    overlay_group = folium.FeatureGroup(name='Overlay')
-    map_city.add_child(overlay_group)
-
-    # Loop through custom_tile_layers and add them to the overlay group
-    for layer_name, layer_data in custom_tile_layers.items():
-        tile_url = layer_data['url']
-        attribution = layer_data['attribution']
-        simplified_name = tile_layers.get(layer_name, layer_name)
-        tile_layer = folium.TileLayer(tiles=tile_url, attr=attribution, name=simplified_name)
-        overlay_group.add_child(tile_layer)
 
     # Save the map as an HTML string
     map_html = map_city.get_root().render()
