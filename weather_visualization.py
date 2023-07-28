@@ -20,6 +20,7 @@ def index():
 
         return render_template(
             'index.html',
+            weather_data=weather_data,
             weather_forecast=weather_forecast
         )
     except Exception as e:

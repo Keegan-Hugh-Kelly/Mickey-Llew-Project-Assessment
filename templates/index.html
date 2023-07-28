@@ -27,8 +27,8 @@
   </div>
 
   <!-- Weather Forecast Table (Manual Horizontal Carousel) -->
-  <h1 class="weather-forecast-title">Daily Weather Forecast for Cape Town</h1>
-  <div id="weather-forecast-container">
+<h1 class="weather-forecast-title">Daily Weather Forecast for {{ weather_data.name }}</h1>
+<div id="weather-forecast-container">
     {% for day_data in weather_forecast %}
     <div class="weather-card">
         <div class="card-header">{{ day_data['day_name'] }}</div>
@@ -41,7 +41,7 @@
         </div>
     </div>
     {% endfor %}
-    </div>
+</div>
 
   <!-- JavaScript Code -->
   <!-- Leaflet library -->
