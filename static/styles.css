@@ -1,24 +1,45 @@
+@font-face {
+  font-family: 'Chillax-Light';
+  src: url('../static/Fonts/Chillax/WEB/fonts/Chillax-Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Chillax-Regular';
+  src: url('../static/Fonts/Chillax/WEB/fonts/Chillax-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Chillax-Medium';
+  src: url('../static/Fonts/Chillax/WEB/fonts/Chillax-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Chillax-Bold';
+  src: url('../static/Fonts/Chillax/WEB/fonts/Chillax-Bold.ttf') format('truetype');
+}
+
 /* Navbar styles */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #fff;
-    border: 5px solid darkslategray;
+    border-radius: 50px;
     color: #000;
     padding: 10px;
-    margin: 10px 20px;
+    margin: 50px 20px;
   }
 
   .nav-logo img {
-    width: 100px;
-    height: 100px;
+    margin-left: 100px;
+    width: 200px;
+    height: 200px;
   }
 
   .nav-links {
     display: flex;
     gap: 20px;
-    font-family: monospace;
+    font-family: 'Chillax-Medium', sans-serif;
   }
 
   .nav-links a {
@@ -26,6 +47,7 @@
     text-decoration: none;
     background-color: none;
     padding: 10px;
+    background-color: rgb(209, 209, 4);
     border-radius: 5px;
     border: 3px solid #000;
     transition: all 0.3s ease-in-out;
@@ -33,7 +55,7 @@
 
   .nav-links a:hover {
     box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.6);
-    background-color: yellow;
+    background-color: rgb(255, 255, 0);
     color: #000;
     text-decoration: none;
     cursor: pointer;
@@ -43,9 +65,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-right: 100px;
     border-radius: 5px;
     border: 3px solid #000;
-    background-color: none;
+    background-color: rgb(209, 209, 4);
+    font-family:'Chillax-Medium', sans-serif;
     color: #000;
     padding: 10px;
     transition: all 0.3s ease-in-out;
@@ -57,25 +81,25 @@
     cursor: pointer;
   }
 
-  /* Map styles */
-  #map-container {
-    margin: 20px auto;
-    width: 80%;
-    height: 78vh;
-    border: 5px solid darkslategray;
-    border-radius: 15px;
-    overflow: hidden;
-  }
-
   /* Weather Forecast Table styles */
+
+  .weather-forecast-title {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 30px;
+    font-family: 'Chillax-Bold', sans-serif;
+    color: #000;
+  }
+  
   #weather-forecast-container {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
-    margin: 50px 0px;
+    margin: 50px auto;
     scroll-behavior: smooth;
     background-color: yellow;
-    border: 5px solid #000;
+    border-top: 5px solid #000;
+    border-bottom: 5px solid #000;
     width: 100vw;
     max-width: 100%;
     white-space: nowrap;
@@ -87,7 +111,6 @@
     width: 40px;
     height: 40px;
     background-color: #f8f9fa;
-    border: 1px solid #ccc;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -105,8 +128,9 @@
   }
 
   .weather-card {
-    min-width: 400px;
-    min-height: 400px;
+    flex: 0 50%;
+    min-width: 300px;
+    min-height: 300px;
     border: 5px solid #000;
     border-radius: 5px;
     padding: 10px;
@@ -123,9 +147,9 @@
 
   /* Weather card header styles */
   .weather-card .card-header {
-    font-family: verdana;
+    font-family: 'Chillax-Medium', sans-serif;
     font-size: 20px;
-    margin-bottom: 10px;
+    margin: 10px 0px;
   }
 
   /* Weather card body styles */
@@ -159,5 +183,22 @@
   }
 
   .card-body p {
-    font-family: monospace;
+    font-family: 'Chillax-Light', sans-serif;
+    text-align: left;
+  }
+
+  /* Map styles */
+
+  .weather-map-title {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 20px;
+    font-family: 'Chillax-Bold', sans-serif;
+    color: #000;
+  }
+
+  #map {
+    height: 50vh;
+    width: 75%;
+    margin: 0 auto;
   }
