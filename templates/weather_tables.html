@@ -7,10 +7,19 @@
     <link rel="stylesheet" href="./static/styles.css" />
 </head>
 <body>
-    <!-- Include the navbar from the original code -->
+    <!-- Nav Bar -->
     {% include 'navbar.html' %}
 
-    <!-- Add the table element here to display the weather tables -->
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <form action="/search" method="get">
+            <input type="text" name="query" placeholder="Search for a city..." />
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <!-- Weather Tables -->
+    
     <!-- You can use HTML table elements to structure and display the data -->
 </body>
 </html>

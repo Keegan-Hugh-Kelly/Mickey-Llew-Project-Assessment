@@ -1,71 +1,101 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Weather Forecast App | by Keegan Kelly</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.3/css/bootstrap.min.css"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="./static/images/mickey_llew_logo.png"
+    />
+    <link rel="stylesheet" href="./static/styles.css" />
+  </head>
 
-<head>
-  <title>Weather Forecast App | by Keegan Kelly</title>
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.3/css/bootstrap.min.css" />
-  <link rel="icon" type="image/x-icon" href="./static/images/mickey_llew_logo.png" />
-  <link rel="stylesheet" href="./static/styles.css" />
-</head>
+  <body>
+    <!-- Navbar -->
+    <div class="navbar">
+      <div class="nav-logo">
+        <img src="./static/images/mickey_llew_logo.png" alt="company_logo" />
+      </div>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/weather-map">Weather Map</a>
+        <a href="/weather-graphs">Weather Graphs</a>
+        <a href="/weather-tables">Weather Tables</a>
+      </div>
+      <div class="cta-button">
+        <a>Contact Us</a>
+      </div>
+    </div>
 
-<body>
-  <!-- Navbar -->
-  <div class="navbar">
-    <div class="nav-logo">
-      <img src="./static/images/mickey_llew_logo.png" alt="company_logo" />
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <form action="/search" method="get">
+        <input type="text" name="query" placeholder="Search for a city..." />
+        <button type="submit">Search</button>
+      </form>
     </div>
-    <div class="nav-links">
-      <a href="/">Home</a>
-      <a href="/weather-map">Weather Map</a>
-      <a href="/weather-graphs">Weather Graphs</a>
-      <a href="/weather-tables">Weather Tables</a>
-    </div>
-    <div class="cta-button">
-      <a>Contact Us</a>
-    </div>
-  </div>
 
-  <!-- Weather Forecast Table (Manual Horizontal Carousel) -->
-<h1 class="weather-forecast-title">Daily Weather Forecast for {{ weather_data.name }}</h1>
-<div id="weather-forecast-container">
-    {% for day_data in weather_forecast %}
-    <div class="weather-card">
-        <div class="card-header">{{ day_data['day_name'] }}</div>
-        <div class="card-body">
-            <img src="{{ day_data['graphic_url'] }}" alt="Weather Graphic" class="img-fluid mb-3" />
-            <p>Temperature: {{ day_data['temperature_max'] }}°C / {{ day_data['temperature_min'] }}°C</p>
-            <p>Description: {{ day_data['description'] }}</p>
-            <p>Cloud Coverage: {{ day_data['cloud_coverage'] }}%</p>
-            <p class="date">{{ day_data['date'].strftime('%B %d') }}</p>
+    <!-- Weather Forecast Table (Manual Horizontal Carousel) -->
+    <h1 class="weather-forecast-title">
+      Daily Weather Forecast for {{ weather_data.name }}
+    </h1>
+    
+    <div id="weather-forecast-container">
+      {% for day_data in weather_forecast %}
+      <div class="weather-card">
+        <div class="card-header">
+          {{ day_data['day_name'] }}
+          <div class="waether-card-date">
+            {{ day_data['date'].strftime('%B %d') }}
+          </div>
         </div>
+        <div class="card-body">
+          <img
+            src="{{ day_data['graphic_url'] }}"
+            alt="Weather Graphic"
+            class="img-fluid mb-3"
+          />
+          <p>
+            Temperature: {{ day_data['temperature_max'] }}°C / {{
+            day_data['temperature_min'] }}°C
+          </p>
+          <p>Description: {{ day_data['description'] }}</p>
+          <p>Cloud Coverage: {{ day_data['cloud_coverage'] }}%</p>
+        </div>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
-</div>
 
-  <!-- JavaScript Code -->
-  <!-- Leaflet library -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script>
-    // Set the initial position to 0
-    let position = 0;
+    <!-- JavaScript Code -->
+    <!-- Leaflet library -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+      // Set the initial position to 0
+      let position = 0;
 
-    // Function to slide the carousel left
-    const slideLeft = () => {
-      position = Math.max(
-        position - weatherCards[0].offsetWidth - 20,
-        -forecastContainer.scrollWidth + forecastContainer.offsetWidth
-      );
-      forecastContainer.style.transform = `translateX(${position}px)`;
-    };
+      // Function to slide the carousel left
+      const slideLeft = () => {
+        position = Math.max(
+          position - weatherCards[0].offsetWidth - 20,
+          -forecastContainer.scrollWidth + forecastContainer.offsetWidth
+        );
+        forecastContainer.style.transform = `translateX(${position}px)`;
+      };
 
-    // Function to slide the carousel right
-    const slideRight = () => {
-      position = Math.min(position + weatherCards[0].offsetWidth + 20, 0);
-      forecastContainer.style.transform = `translateX(${position}px)`;
-    };
-  </script>
-</body>
-
+      // Function to slide the carousel right
+      const slideRight = () => {
+        position = Math.min(position + weatherCards[0].offsetWidth + 20, 0);
+        forecastContainer.style.transform = `translateX(${position}px)`;
+      };
+    </script>
+  </body>
 </html>

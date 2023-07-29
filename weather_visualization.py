@@ -1,15 +1,15 @@
 import requests
 import datetime
 import folium
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, request, redirect, url_for
 import os
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
 API_KEY = 'c15281beae1e4915fef587ae1b1382ce'  # Change to your API key
 API_KEY_NAME = 'default'  # Change to your API key name
-CITY = 'Cape Town'  # Change to your city
+CITY = 'Cape Town'  # Default city
 UNITS = 'metric'  # Change to 'imperial' for Fahrenheit
 
 @app.route('/')
@@ -37,12 +37,25 @@ def get_weather_data():
 
     return data
 
+@app.route('/search', methods=['GET'])
+def search():
+    global CITY
+    query = request.args.get('query')
+    CITY = query if query else 'Cape Town'
+
+    # Determine the current page and redirect back to it after the search
+    referrer = request.referrer
+    if referrer and 'weather-map' in referrer:
+        return redirect(url_for('weather_map'))
+    else:
+        return redirect(url_for('index'))
+
 # Route for the Weather Map page
 @app.route('/weather-map')
 def weather_map():
     try:
         weather_data = get_weather_data()
-        return render_template('weather_map.html', weather_data=weather_data)
+        return render_template('weather_map.html', weather_data=weather_data, city=CITY)
     except Exception as e:
         error_message = f"Error: {e}"
         return render_template('error.html', error_message=error_message)

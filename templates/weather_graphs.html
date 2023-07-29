@@ -7,10 +7,25 @@
     <link rel="stylesheet" href="./static/styles.css" />
 </head>
 <body>
-    <!-- Include the navbar from the original code -->
+    <!-- Nav Bar -->
     {% include 'navbar.html' %}
 
-    <!-- Add the graphs elements here to display the weather graphs -->
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <form action="/search" method="get">
+            <input type="text" name="query" placeholder="Search for a city..." />
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+   <!-- Weather Graphs -->
+   {% if weather_graphs %}
+   <h2>Temperature Forecast Graph</h2>
+   <img src="data:image/png;base64,{{ weather_graphs }}" alt="Temperature Forecast Graph" class="img-fluid">
+   {% else %}
+   <p>No weather graph data available.</p>
+   {% endif %}
+
     <!-- You can use libraries like matplotlib to generate and display the graphs -->
 </body>
 </html>

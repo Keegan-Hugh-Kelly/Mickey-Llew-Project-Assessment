@@ -1,45 +1,58 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Weather Map | Weather Forecast App</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.3/css/bootstrap.min.css" />
-    <link rel="icon" type="image/x-icon" href="./static/images/mickey_llew_logo.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.3/css/bootstrap.min.css"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="./static/images/mickey_llew_logo.png"
+    />
     <link rel="stylesheet" href="./static/styles.css" />
 
     <!-- Add Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+  </head>
+  <body>
     <!-- Include the navbar from the original code -->
     {% include 'navbar.html' %}
 
-    <!-- Add the map element here to display the weather information for the city -->
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <form action="/search" method="get">
+        <input type="text" name="query" placeholder="Search for a city..." />
+        <button type="submit">Search</button>
+      </form>
+    </div>
+
     <div class="weather-map-title">
-        <h1>Weather Map for {{ weather_data.name }}</h1>
+      <h1>Weather Map for {{ city }}</h1>
     </div>
     <div id="map"></div>
 
     <!-- Add Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        // Add JavaScript code to initialize and display the map
-        const weatherData = {{ weather_data | tojson }};
+      const weatherData = {{ weather_data | tojson | safe }};
+      const cityName = "{{ city }}";
 
-        // Extract latitude and longitude from weather data
-        const latitude = weatherData.coord.lat;
-        const longitude = weatherData.coord.lon;
+      // Initialize the map
+      const map = L.map('map').setView([weatherData.coord.lat, weatherData.coord.lon], 10);
 
-        // Initialize the map
-        const map = L.map('map').setView([latitude, longitude], 10);
+      // Add a tile layer to the map
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-        // Add a tile layer to the map
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+      // Add a marker to the map at the specified location
+      const marker = L.marker([weatherData.coord.lat, weatherData.coord.lon]).addTo(map);
 
-        // Add a marker to the map at the specified location
-        const marker = L.marker([latitude, longitude]).addTo(map);
-
-        // Add a popup to the marker with weather information
-        marker.bindPopup(`City: ${weatherData.name}<br>Temperature: ${weatherData.main.temp}°C<br>Description: ${weatherData.weather[0].description}`).openPopup();
+      // Add a popup to the marker with weather information
+      marker.bindPopup(`City: ${cityName}<br>Temperature: ${weatherData.main.temp}°C<br>Description: ${weatherData.weather[0].description}`).openPopup();
     </script>
-</body>
+  </body>
 </html>
