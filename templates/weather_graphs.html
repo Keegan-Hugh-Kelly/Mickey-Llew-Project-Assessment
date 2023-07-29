@@ -2,30 +2,276 @@
 <html>
 <head>
     <title>Weather Graphs | Weather Forecast App</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.3/css/bootstrap.min.css" />
-    <link rel="icon" type="image/x-icon" href="./static/images/mickey_llew_logo.png" />
-    <link rel="stylesheet" href="./static/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.3/css/bootstrap.min.css"/>
+    <link rel="icon" type="image/x-icon" href="./static/images/mickey_llew_logo.png"/>
+    <link rel="stylesheet" href="./static/styles.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <!-- Nav Bar -->
-    {% include 'navbar.html' %}
+<!-- Nav Bar -->
+{% include 'navbar.html' %}
 
-    <!-- Search Bar -->
-    <div class="search-bar">
-        <form action="/search" method="get">
-            <input type="text" name="query" placeholder="Search for a city..." />
-            <button type="submit">Search</button>
-        </form>
-    </div>
+<!-- Search Bar -->
+<div class="search-bar">
+    <form action="/search" method="get">
+        <input type="text" name="query" placeholder="Search for a city..."/>
+        <button type="submit">Search</button>
+    </form>
+</div>
 
-   <!-- Weather Graphs -->
-   {% if weather_graphs %}
-   <h2>Temperature Forecast Graph</h2>
-   <img src="data:image/png;base64,{{ weather_graphs }}" alt="Temperature Forecast Graph" class="img-fluid">
-   {% else %}
-   <p>No weather graph data available.</p>
-   {% endif %}
+<!-- Weather Graphs Title -->
+<div class="weather-graphs-title">
+    <h1>Weather Graphs for {{ city }}</h1>
+</div>
 
-    <!-- You can use libraries like matplotlib to generate and display the graphs -->
+<!-- Temperature Line Chart -->
+<canvas class="weather-charts" id="temperatureChart"></canvas>
+
+<!-- Precipitation Bar Chart -->
+<canvas class="weather-charts" id="precipitationChart"></canvas>
+
+<!-- Wind Speed and Direction Polar Chart -->
+<canvas class="weather-charts" id="windChart"></canvas>
+
+<!-- Humidity Area Chart -->
+<canvas class="weather-charts" id="humidityChart"></canvas>
+
+<script>
+    const cityName = "{{ city }}";
+    // JavaScript code to render the weather graphs
+    var dates = {{ dates | tojson }};
+    var maxTemperatures = {{ max_temperatures | tojson }};
+    var minTemperatures = {{ min_temperatures | tojson }};
+    var precipitations = {{ precipitations | tojson }};
+    var windSpeeds = {{ wind_speeds | tojson }};
+    var humidities = {{ humidities | tojson }};
+
+    // Function to update weather graphs
+    function updateGraphs() {
+        // Max and Min Temperatures Graph
+        temperatureChart.data.labels = dates;
+        temperatureChart.data.datasets[0].data = maxTemperatures;
+        temperatureChart.data.datasets[1].data = minTemperatures;
+        temperatureChart.update();
+
+        // Precipitation Graph
+        precipitationChart.data.labels = dates;
+        precipitationChart.data.datasets[0].data = precipitations;
+        precipitationChart.update();
+
+        // Wind Speed Graph
+        windSpeedChart.data.labels = dates;
+        windSpeedChart.data.datasets[0].data = windSpeeds;
+        windSpeedChart.update();
+
+        // Humidity Graph
+        humidityChart.data.labels = dates;
+        humidityChart.data.datasets[0].data = humidities;
+        humidityChart.update();
+    }
+
+    // Max and Min Temperatures Graph
+    var ctxTemp = document.getElementById('temperatureChart').getContext('2d');
+    var temperatureChart = new Chart(ctxTemp, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [
+                {
+                    label: 'Max Temperature',
+                    data: maxTemperatures,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderWidth: 1,
+                    fill: true
+                },
+                {
+                    label: 'Min Temperature',
+                    data: minTemperatures,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderWidth: 1,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Temperature (°C)'
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Max and Min Temperatures Forecast'
+                }
+            }
+        }
+    });
+
+    // Precipitation Graph
+    var ctxPrecip = document.getElementById('precipitationChart').getContext('2d');
+    var precipitationChart = new Chart(ctxPrecip, {
+        type: 'bar',
+        data: {
+            labels: dates,
+            datasets: [
+                {
+                    label: 'Precipitation',
+                    data: precipitations,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Precipitation (mm)'
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Precipitation Forecast'
+                }
+            }
+        }
+    });
+
+    // Wind Speed Graph
+    var ctxWind = document.getElementById('windChart').getContext('2d');
+    var windSpeedChart = new Chart(ctxWind, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [
+                {
+                    label: 'Wind Speed',
+                    data: windSpeeds,
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    borderWidth: 1,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Wind Speed (m/s)'
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Wind Speed Forecast'
+                }
+            }
+        }
+    });
+
+    // Humidity Graph
+    var ctxHumid = document.getElementById('humidityChart').getContext('2d');
+    var humidityChart = new Chart(ctxHumid, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [
+                {
+                    label: 'Humidity',
+                    data: humidities,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 1,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Humidity (%)'
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Humidity Forecast'
+                }
+            }
+        }
+    });
+
+    // Call the function to update the graphs when the page loads
+    updateGraphs();
+
+    // Function to handle form submission for city search
+    var form = document.querySelector('form');
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var input = document.querySelector('input[name="query"]');
+        var city = input.value.trim();
+        input.value = ''; // Clear the input field
+        fetch('/search?query=' + city, {method: 'GET'})
+            .then(function (response) {
+                if (response.redirected) {
+                    window.location.href = response.url; // Redirect to the new city's weather graphs page
+                } else {
+                    alert('City not found. Please try again.'); // Display an error message if city not found
+                }
+            });
+    });
+</script>
 </body>
 </html>

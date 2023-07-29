@@ -18,8 +18,78 @@
         </form>
     </div>
 
+    <!-- Weather Tables Title -->
+    <div class="weather-tables-title">
+        <h1>Weather Tables for {{ city }}</h1>
+    </div>
+
     <!-- Weather Tables -->
-    
+    <div class="weather-table-container">
+        <div class="carousel-controls">
+            <button onclick="scrollTable('left')">Left</button>
+            <button onclick="scrollTable('right')">Right</button>
+        </div>
+        <div class="weather-table-wrapper">
+            <table class="weather-table">
+                <thead>
+                    <tr>
+                        <th class="sticky-header">Date</th>
+                        {% for time in date_range %}
+                        <th class="sticky-header" colspan="6">{{ time.strftime('%Y-%m-%d %H:%M') }}</th>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th class="sticky-header">Data</th>
+                        {% for time in date_range %}
+                        <th class="sticky-header">Temperature (°C)</th>
+                        <th class="sticky-header">Description</th>
+                        <th class="sticky-header">Cloud Coverage (%)</th>
+                        <th class="sticky-header">Wind Speed (m/s)</th>
+                        <th class="sticky-header">Wind Direction (°)</th>
+                        <th class="sticky-header">Humidity (%)</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for time in date_range %}
+                    <tr>
+                        <td>{{ time.strftime('%Y-%m-%d %H:%M') }}</td>
+                        {% for day_data in forecast_by_time.get(time, {}) %}
+                        <td>{{ "%.1f"|format(day_data['temperature_max']) }} / {{ "%.1f"|format(day_data['temperature_min']) }}</td>
+                        <td>{{ day_data['description'] }}</td>
+                        <td>{{ day_data['cloud_coverage'] }}</td>
+                        <td>{{ "%.1f"|format(day_data['wind_speed']) }}</td>
+                        <td>{{ "%.1f"|format(day_data['wind_direction']) }}</td>
+                        <td>{{ day_data['humidity'] }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <!-- You can use HTML table elements to structure and display the data -->
+    <script>
+        const cityName = "{{ city }}";
+
+        const weatherTable = document.querySelector(".weather-table");
+        const weatherTableWrapper = document.querySelector(".weather-table-wrapper");
+        let scrollValue = 0;
+        const scrollStep = 400;
+
+        // Function to scroll the table left or right
+        const scrollTable = (direction) => {
+            const maxScroll = weatherTable.scrollWidth - weatherTableWrapper.clientWidth;
+
+            if (direction === "left") {
+                scrollValue = Math.max(scrollValue - scrollStep, 0);
+            } else if (direction === "right") {
+                scrollValue = Math.min(scrollValue + scrollStep, maxScroll);
+            }
+
+            weatherTable.style.transform = `translateX(-${scrollValue}px)`;
+        };
+    </script>
 </body>
 </html>

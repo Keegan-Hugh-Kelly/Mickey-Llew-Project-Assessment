@@ -241,7 +241,6 @@
 }
 
 /* Map styles */
-
 .weather-map-title {
   text-align: center;
   margin-top: 20px;
@@ -250,8 +249,100 @@
   color: #000;
 }
 
-#map {
+.map-container {
   height: 50vh;
   width: 75%;
   margin: 0 auto;
+  border: 5px solid #000; /* Black border */
+  border-radius: 20px; /* Rounded corners */
+  overflow: hidden; /* Ensure the rounded corners won't clip the zoom buttons inside the map */
+  position: relative; /* Required for absolute positioning of the map */
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+/* Weather-Charts Styles */
+
+.weather-graphs-title {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 20px;
+  font-family: "Chillax-Medium", sans-serif;
+  color: #000;
+}
+
+.weather-tables-title {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 20px;
+  font-family: "Chillax-Medium", sans-serif;
+  color: #000;
+}
+
+.weather-table-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.weather-table {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+  overflow-x: auto;
+  scrollbar-width: none; /* Hide horizontal scrollbar on supported browsers */
+  -ms-overflow-style: none; /* Hide horizontal scrollbar on Internet Explorer */
+}
+
+.weather-table th,
+.weather-table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+  flex: 0 0 200px; /* Adjust the width of each table cell as needed */
+}
+
+.weather-table th.date-column {
+  text-align: left;
+}
+
+.weather-table th.sticky-header {
+  position: sticky;
+  top: 0;
+  background-color: #f2f2f2;
+}
+
+.weather-table tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+.carousel-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.carousel-controls button {
+  padding: 8px 12px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* Style the scrollbar (optional) */
+.weather-table::-webkit-scrollbar {
+  width: 10px;
+}
+
+.weather-table::-webkit-scrollbar-thumb {
+  background-color: #007bff;
+}
+
+.weather-table::-webkit-scrollbar-thumb:hover {
+  background-color: #0056b3;
 }
