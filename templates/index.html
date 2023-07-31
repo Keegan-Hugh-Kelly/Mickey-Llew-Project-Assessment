@@ -17,20 +17,7 @@
 
   <body>
     <!-- Navbar -->
-    <div class="navbar">
-      <div class="nav-logo">
-        <img src="./static/images/mickey_llew_logo.png" alt="company_logo" />
-      </div>
-      <div class="nav-links">
-        <a href="/">Home</a>
-        <a href="/weather-map">Weather Map</a>
-        <a href="/weather-graphs">Weather Graphs</a>
-        <a href="/weather-tables">Weather Tables</a>
-      </div>
-      <div class="cta-button">
-        <a>Contact Us</a>
-      </div>
-    </div>
+    {% include 'navbar.html' %}
 
     <!-- Search Bar -->
     <div class="search-bar">
@@ -40,7 +27,7 @@
       </form>
     </div>
 
-    <!-- Weather Forecast Table (Manual Horizontal Carousel) -->
+    <!-- Weather Forecast Table -->
     <h1 class="weather-forecast-title">
       Daily Weather Forecast for {{ weather_data.name }}
     </h1>
@@ -71,6 +58,9 @@
       {% endfor %}
     </div>
 
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
     <!-- JavaScript Code -->
     <!-- Leaflet library -->
     <link
@@ -79,10 +69,8 @@
     />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-      // Set the initial position to 0
       let position = 0;
 
-      // Function to slide the carousel left
       const slideLeft = () => {
         position = Math.max(
           position - weatherCards[0].offsetWidth - 20,
@@ -91,7 +79,6 @@
         forecastContainer.style.transform = `translateX(${position}px)`;
       };
 
-      // Function to slide the carousel right
       const slideRight = () => {
         position = Math.min(position + weatherCards[0].offsetWidth + 20, 0);
         forecastContainer.style.transform = `translateX(${position}px)`;

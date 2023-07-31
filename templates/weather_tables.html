@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Weather Tables | Weather Forecast App</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.3/css/bootstrap.min.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.3/css/bootstrap.min.css" />
     <link rel="icon" type="image/x-icon" href="./static/images/mickey_llew_logo.png" />
     <link rel="stylesheet" href="./static/styles.css" />
 </head>
+
 <body>
     <!-- Nav Bar -->
     {% include 'navbar.html' %}
@@ -20,56 +23,61 @@
 
     <!-- Weather Tables Title -->
     <div class="weather-tables-title">
-        <h1>Weather Tables for {{ city }}</h1>
+        <h1>Weather Forecast for {{ city }}</h1>
     </div>
 
     <!-- Weather Tables -->
     <div class="weather-table-container">
-        <div class="carousel-controls">
-            <button onclick="scrollTable('left')">Left</button>
-            <button onclick="scrollTable('right')">Right</button>
-        </div>
         <div class="weather-table-wrapper">
             <table class="weather-table">
                 <thead>
                     <tr>
-                        <th class="sticky-header">Date</th>
-                        {% for time in date_range %}
-                        <th class="sticky-header" colspan="6">{{ time.strftime('%Y-%m-%d %H:%M') }}</th>
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        <th class="sticky-header">Data</th>
-                        {% for time in date_range %}
-                        <th class="sticky-header">Temperature (°C)</th>
-                        <th class="sticky-header">Description</th>
-                        <th class="sticky-header">Cloud Coverage (%)</th>
-                        <th class="sticky-header">Wind Speed (m/s)</th>
-                        <th class="sticky-header">Wind Direction (°)</th>
-                        <th class="sticky-header">Humidity (%)</th>
+                        <th>Day of the Week</th>
+                        {% for forecast in weather_forecast %}
+                        <th>{{ forecast['date'].strftime('%A') }}</th>
                         {% endfor %}
                     </tr>
                 </thead>
                 <tbody>
-                    {% for time in date_range %}
                     <tr>
-                        <td>{{ time.strftime('%Y-%m-%d %H:%M') }}</td>
-                        {% for day_data in forecast_by_time.get(time, {}) %}
-                        <td>{{ "%.1f"|format(day_data['temperature_max']) }} / {{ "%.1f"|format(day_data['temperature_min']) }}</td>
-                        <td>{{ day_data['description'] }}</td>
-                        <td>{{ day_data['cloud_coverage'] }}</td>
-                        <td>{{ "%.1f"|format(day_data['wind_speed']) }}</td>
-                        <td>{{ "%.1f"|format(day_data['wind_direction']) }}</td>
-                        <td>{{ day_data['humidity'] }}</td>
+                        <td>Temperature (Max/Min)</td>
+                        {% for forecast in weather_forecast %}
+                        <td>{{ "%.2f"|format(forecast['temperature_max']) }}°C / {{
+                            "%.2f"|format(forecast['temperature_min']) }}°C</td>
                         {% endfor %}
                     </tr>
-                    {% endfor %}
+                    <tr>
+                        <td>Humidity</td>
+                        {% for forecast in weather_forecast %}
+                        <td>{{ "%.2f"|format(forecast['humidity']) }}%</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Precipitation</td>
+                        {% for forecast in weather_forecast %}
+                        <td>{{ "%.2f"|format(forecast['precipitation']) }} mm</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Wind Speed</td>
+                        {% for forecast in weather_forecast %}
+                        <td>{{ "%.2f"|format(forecast['wind_speed']) }} km/h</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Wind Direction</td>
+                        {% for forecast in weather_forecast %}
+                        <td>{{ forecast['wind_direction']}}</td>
+                        {% endfor %}
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- You can use HTML table elements to structure and display the data -->
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
     <script>
         const cityName = "{{ city }}";
 
@@ -78,7 +86,6 @@
         let scrollValue = 0;
         const scrollStep = 400;
 
-        // Function to scroll the table left or right
         const scrollTable = (direction) => {
             const maxScroll = weatherTable.scrollWidth - weatherTableWrapper.clientWidth;
 
@@ -92,4 +99,5 @@
         };
     </script>
 </body>
+
 </html>

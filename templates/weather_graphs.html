@@ -36,9 +36,11 @@
 <!-- Humidity Area Chart -->
 <canvas class="weather-charts" id="humidityChart"></canvas>
 
+<!-- Footer -->
+{% include 'footer.html' %}
+
 <script>
     const cityName = "{{ city }}";
-    // JavaScript code to render the weather graphs
     var dates = {{ dates | tojson }};
     var maxTemperatures = {{ max_temperatures | tojson }};
     var minTemperatures = {{ min_temperatures | tojson }};
@@ -46,7 +48,6 @@
     var windSpeeds = {{ wind_speeds | tojson }};
     var humidities = {{ humidities | tojson }};
 
-    // Function to update weather graphs
     function updateGraphs() {
         // Max and Min Temperatures Graph
         temperatureChart.data.labels = dates;
@@ -253,7 +254,6 @@
         }
     });
 
-    // Call the function to update the graphs when the page loads
     updateGraphs();
 
     // Function to handle form submission for city search
@@ -262,13 +262,13 @@
         event.preventDefault();
         var input = document.querySelector('input[name="query"]');
         var city = input.value.trim();
-        input.value = ''; // Clear the input field
+        input.value = '';
         fetch('/search?query=' + city, {method: 'GET'})
             .then(function (response) {
                 if (response.redirected) {
-                    window.location.href = response.url; // Redirect to the new city's weather graphs page
+                    window.location.href = response.url;
                 } else {
-                    alert('City not found. Please try again.'); // Display an error message if city not found
+                    alert('City not found. Please try again.'); 
                 }
             });
     });

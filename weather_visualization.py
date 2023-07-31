@@ -4,13 +4,26 @@ from flask import Flask, render_template, Response, request, redirect, url_for
 import os
 import datetime
 from jinja2 import Undefined
+import pandas as pd
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contact_messages.db'
+db = SQLAlchemy(app)
 
 API_KEY = 'c15281beae1e4915fef587ae1b1382ce'  # Change to your API key
 API_KEY_NAME = 'default'  # Change to your API key name
 CITY = 'Cape Town'  # Default city
 UNITS = 'metric'  # Change to 'imperial' for Fahrenheit
+
+class ContactMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+
+with app.app_context():
+    db.create_all()
 
 
 @app.route('/')
@@ -46,7 +59,6 @@ def search():
     query = request.args.get('query')
     CITY = query if query else 'Cape Town'
 
-    # Determine the current page and redirect back to it after the search
     referrer = request.referrer
     if referrer and 'weather-map' in referrer:
         return redirect(url_for('weather_map'))
@@ -57,9 +69,6 @@ def search():
     else:
         return redirect(url_for('index'))
 
-# Route for the Weather Map page
-
-
 @app.route('/weather-map')
 def weather_map():
     try:
@@ -69,16 +78,11 @@ def weather_map():
         error_message = f"Error: {e}"
         return render_template('error.html', error_message=error_message)
 
-# Route for the Weather Graphs page
-
-
 @app.route('/weather-graphs')
 def weather_graphs():
     try:
-        # Get weather forecast data
         weather_forecast = get_weather_forecast()
 
-        # Extracting data for the graphs
         dates = [forecast['date'] for forecast in weather_forecast]
         max_temperatures = [forecast['temperature_max']
                             for forecast in weather_forecast]
@@ -92,7 +96,6 @@ def weather_graphs():
         humidities = [forecast['humidity'] for forecast in weather_forecast]
         uv_indices = [forecast['uv_index'] for forecast in weather_forecast]
 
-        # Replace Undefined values with None
         dates = [date if date is not Undefined else None for date in dates]
         max_temperatures = [
             temp if temp is not Undefined else None for temp in max_temperatures]
@@ -124,43 +127,37 @@ def weather_graphs():
     except Exception as e:
         error_message = f"Error: {e}"
         return render_template('error.html', error_message=error_message)
-
-# Route for the Weather Tables page
+    
 @app.route('/weather-tables')
 def weather_tables():
     try:
-        # Get weather forecast data
         weather_forecast = get_weather_forecast()
 
-        # Create a date range for the next 24 hours, incrementing every 3 hours
-        date_range = [datetime.datetime.now() + datetime.timedelta(hours=i) for i in range(0, 24, 3)]
-
-        # Reorganize the weather forecast data by time
-        forecast_by_time = {}
-        for day_data in weather_forecast:
-            date = day_data['date']
-            for i, time in enumerate(date_range):
-                if time.date() == date.date() and time.hour == date.hour:
-                    if time not in forecast_by_time:
-                        forecast_by_time[time] = {
-                            'temperature_max': day_data['temperature_max'],
-                            'temperature_min': day_data['temperature_min'],
-                            'description': day_data['description'],
-                            'cloud_coverage': day_data['cloud_coverage'],
-                            'wind_speed': day_data['wind_speed'],
-                            'wind_direction': day_data['wind_direction'],
-                            'humidity': day_data['humidity']
-                        }
-                    else:
-                        forecast_by_time[time]['temperature_max'] = max(forecast_by_time[time]['temperature_max'], day_data['temperature_max'])
-                        forecast_by_time[time]['temperature_min'] = min(forecast_by_time[time]['temperature_min'], day_data['temperature_min'])
-
-        return render_template('weather_tables.html', city=CITY, forecast_by_time=forecast_by_time, date_range=date_range)
-
+        return render_template(
+            'weather_tables.html',
+            weather_forecast=weather_forecast,
+            city=CITY
+        )
     except Exception as e:
         error_message = f"Error: {e}"
         return render_template('error.html', error_message=error_message)
+    
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        email = request.form['email']
+        message = request.form['message']
+        contact_message = ContactMessage(email=email, message=message)
+        db.session.add(contact_message)
+        db.session.commit()
+        return redirect(url_for('contact'))
 
+    return render_template('contact.html')
+    
+def degrees_to_compass(degrees):
+    directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+    index = round(degrees / 22.5) % 16
+    return directions[index]
 
 def get_weather_forecast():
     url = f'https://api.openweathermap.org/data/2.5/forecast?q={CITY}&units={UNITS}&appid={API_KEY}'
@@ -176,6 +173,8 @@ def get_weather_forecast():
     for item in data['list']:
         date_time = datetime.datetime.fromtimestamp(item['dt'])
         date = date_time.date()
+        wind_direction_deg = item['wind']['deg']
+        wind_direction = degrees_to_compass(wind_direction_deg)
 
         for forecast in weather_forecast:
             if forecast['date'] == date:
@@ -195,11 +194,9 @@ def get_weather_forecast():
                 forecast['description'] = description
                 forecast['precipitation'] += precipitation
                 forecast['wind_speed'] = item['wind']['speed']
-                forecast['wind_direction'] = item['wind']['deg']
+                forecast['wind_direction'] = wind_direction
                 forecast['humidity'] = item['main']['humidity']
-                # Placeholder for UV index, as it's not provided by the API
                 forecast['uv_index'] = None
-                # Add cloud coverage data
                 forecast['cloud_coverage'] = item['clouds']['all']
                 break
         else:
@@ -220,17 +217,15 @@ def get_weather_forecast():
                 'temperature_min': temperature,
                 'description': description,
                 'precipitation': precipitation,
-                # Add cloud coverage data
                 'cloud_coverage': item['clouds']['all'],
                 'wind_speed': item['wind']['speed'],
-                'wind_direction': item['wind']['deg'],
+                'wind_direction': wind_direction,
                 'humidity': item['main']['humidity'],
-                'uv_index': None,  # Placeholder for UV index, as it's not provided by the API
+                'uv_index': None,
                 'graphic_url': get_cloud_coverage_graphic(description)
             })
 
     return weather_forecast
-
 
 def get_cloud_coverage_graphic(description):
     description_lower = description.lower()
