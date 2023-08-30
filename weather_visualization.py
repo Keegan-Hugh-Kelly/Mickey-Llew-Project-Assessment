@@ -233,10 +233,10 @@ def get_cloud_coverage_graphic(description):
     if 'clear' in description_lower or 'sun' in description_lower:
         return os.path.join('/static/weatherimages', 'clear.png')
     elif 'cloud' in description_lower:
-        return os.path.join('/static/weatherimages', 'cloudy.png')
+        return os.path.join('/static/weatherimages', 'partly-cloudy.png')
 
     elif 'overcast' in description_lower:
-        return os.path.join('/static/weatherimages', 'partly-cloudy.png')
+        return os.path.join('/static/weatherimages', 'cloudy.png')
 
     elif 'rain' in description_lower or 'shower' in description_lower:
         return os.path.join('/static/weatherimages', 'lightrain.png')
